@@ -6,3 +6,4 @@ Nachdem einer von uns eine neue Farbe einstellt und diese durch den Druckschalte
 Frühestens nach 15 Sekunden kann ein anderer die Farbe wieder ändern. 
 Das symbolisiert unsere Verbundenheit. 
 Eine Internetseite zeigt die aktuelle Farbe an und listet die letzten 1000 unterschiedlichen Aktivitäten auf.
+Tolle Idee!
