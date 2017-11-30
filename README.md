@@ -6,4 +6,18 @@
 * Frühestens nach 15 Sekunden kann ein anderer die Farbe wieder ändern.  
 * Das symbolisiert unsere Verbundenheit.  
 * Eine Internetseite zeigt die aktuelle Farbe an und listet die letzten 1000 unterschiedlichen Aktivitäten auf.  
-http://xmaslight.herokuapp.com
+https://xmaslight.herokuapp.com
+
+## Installation
+```
+git clone https://github.com/urbaninnovation/xmaslight
+npm install
+```
+## Start des Christbaum-Kugel-Clients (index.js)
+```
+npm start
+```
+## Start des Christbaum-Kugel-Servers (server.js)
+```
+node server.js
+```
