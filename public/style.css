@@ -111,8 +111,30 @@ ul {
 
 /* Messages */
 
+.colorArea {
+  border: 10px solid #000;
+  top: 0;
+  height: 60px;
+  left: 0;
+  outline: none;
+  padding-left: 10px;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  background-color: #000;
+}
+
+.colorBlock {
+  height: 40px;
+  width: 40px;
+  cursor: pointer;
+  float:left;
+  margin-right: 5px;
+}
+
 .chatArea {
   height: 100%;
+  padding-top: 60px;
   padding-bottom: 60px;
 }
 
