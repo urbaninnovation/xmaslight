@@ -17,7 +17,7 @@ npm install
 ```
 npm start
 ```
-## Start des Christbaum-Kugel-Server (server.js)
+## Start des Christbaum-Kugel-Servers (server.js)
 ```
 node server.js
 ```
