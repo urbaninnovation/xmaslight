@@ -1,5 +1,6 @@
 const io = require('socket.io-client');
 var socket = io('http://xmaslight.herokuapp.com/');
+//var socket = io('http://localhost:3000/');
 var username = 'bot';
 
 socket.on('connect', function () {
@@ -9,7 +10,7 @@ socket.on('connect', function () {
   socket.emit('change request', '#ff0000');
   
   socket.on('change request', function (data) {
-    console.log('[C] '+data.username+': '+data.color);
+    console.log('[C] '+data.username+': '+data.request);
     //
     // io-magic with rbg-strip here...
     //
@@ -33,9 +34,11 @@ socket.on('connect', function () {
 
   socket.on('reconnect', function () {
     console.log('you have been reconnected');
+/*
     if (username) {
       socket.emit('add user', username);
     }
+*/
   });
 
   socket.on('reconnect_error', function () {

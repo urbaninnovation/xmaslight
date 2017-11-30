@@ -229,7 +229,7 @@ $(function() {
   socket.on('login', function (data) {
     connected = true;
     // Display the welcome message
-    var message = "Welcome to xmaslight-Chat...";
+    var message = "";
     log(message, {
       prepend: true
     });
@@ -238,6 +238,12 @@ $(function() {
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('new message', function (data) {
+    addChatMessage(data);
+  });
+
+  // Whenever the server emits 'new message', update the chat body
+  socket.on('change request', function (data) {
+    data.message = 'Request to change color to '+data.request;
     addChatMessage(data);
   });
 
