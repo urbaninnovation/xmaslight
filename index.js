@@ -9,10 +9,17 @@ socket.on('connect', function () {
   socket.emit('new message', 'hello world');
   socket.emit('change request', '#ff0000');
   
+  //
+  // Detect if someone touched the control dial...
+  // if so
+  // socket.emit('change request', new_color);
+  //
+
   socket.on('change request', function (data) {
-    console.log('[C] '+data.username+': '+data.request);
+    console.log('[C] '+data.username+': '+data.request+' (validated='+data.validated+')');
     //
-    // io-magic with rbg-strip here...
+    // Someone requested to change the color.
+    // Do IO-magic here...
     //
   });
 

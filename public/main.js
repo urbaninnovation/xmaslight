@@ -243,7 +243,7 @@ $(function() {
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('change request', function (data) {
-    data.message = 'Request to change color to '+data.request;
+    data.message = 'Request to change color to '+data.request+' (validated='+data.validated+')';
     addChatMessage(data);
   });
 

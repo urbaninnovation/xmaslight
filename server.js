@@ -33,7 +33,8 @@ io.on('connection', function (socket) {
   socket.on('change request', function (color) {
     socket.broadcast.emit('change request', {
       username: socket.username,
-      request: color
+      request: color,
+      validated: true // TODO: validate change request
     });
   });
 
