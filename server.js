@@ -29,6 +29,14 @@ io.on('connection', function (socket) {
     });
   });
 
+  // when the client emits 'change request', this listens and executes
+  socket.on('change request', function (color) {
+    socket.broadcast.emit('change request', {
+      username: socket.username,
+      request: color
+    });
+  });
+
   // when the client emits 'add user', this listens and executes
   socket.on('add user', function (username) {
     if (addedUser) return;
