@@ -1,6 +1,6 @@
 const io = require('socket.io-client');
-var socket = io('http://xmaslight.herokuapp.com/');
-//var socket = io('http://localhost:3000/');
+//var socket = io('http://xmaslight.herokuapp.com/');
+var socket = io('http://localhost:3000/');
 var username = 'bot';
 
 socket.on('connect', function () {

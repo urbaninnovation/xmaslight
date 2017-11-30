@@ -15,6 +15,7 @@ $(function() {
 
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
+  var $colorBlock = $('.colorBlock'); // color blocks
 
   // Prompt for setting a username
   var username;
@@ -65,6 +66,21 @@ $(function() {
       });
       // tell server to execute 'new message' and send along one parameter
       socket.emit('new message', message);
+    }
+  }
+
+  // Sends a change request
+  function sendChangeRequest (color) {
+    // Prevent markup from being injected into the message
+    color = cleanInput(color);
+    // if there is a non-empty message and a socket connection
+    if (color && connected) {
+      message = 'Request to change color to '+color;
+      addChatMessage({
+        username: username,
+        message: message
+      });
+      socket.emit('change request', color);
     }
   }
 
@@ -221,6 +237,11 @@ $(function() {
   // Focus input when clicking on the message input's border
   $inputMessage.click(function () {
     $inputMessage.focus();
+  });
+
+  // Focus input when clicking on the message input's border
+  $colorBlock.click(function (event) {
+    sendChangeRequest(this.style.backgroundColor);
   });
 
   // Socket events
