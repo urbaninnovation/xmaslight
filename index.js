@@ -1,3 +1,15 @@
+var Gpio = require('onoff').Gpio;
+var LED = new Gpio(17, 'out');
+
+function blinkLED() {
+  if (LED.readSync() === 0) {
+    LED.writeSync(1);
+    setTimeout(()=>{blinkLED()}, 320);
+  } else {
+    LED.writeSync(0);
+  }
+}
+
 const io = require('socket.io-client');
 var socket = io('http://xmaslight.herokuapp.com/');
 //var socket = io('http://localhost:3000/');
@@ -17,6 +29,7 @@ socket.on('connect', function () {
 
   socket.on('change request', function (data) {
     console.log('[C] '+data.username+': '+data.request+' (validated='+data.validated+')');
+    blinkLED();
     //
     // Someone requested to change the color.
     // Do IO-magic here...
@@ -25,14 +38,17 @@ socket.on('connect', function () {
 
   socket.on('new message', function (data) {
     console.log('[M] '+data.username+': '+data.message);
+    blinkLED();
   });
 
   socket.on('user joined', function (data) {
     console.log(data.username + ' joined');
+    blinkLED();
   });
 
   socket.on('user left', function (data) {
     console.log(data.username + ' left');
+    blinkLED();
   });
 
   socket.on('disconnect', function () {
