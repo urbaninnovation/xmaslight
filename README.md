@@ -14,6 +14,12 @@ git clone https://github.com/urbaninnovation/xmaslight
 cd xmaslight
 npm install
 ```
+## Update (update Client)
+```
+cd xmaslight
+git pull
+```
+
 ## Start des Christbaum-Kugel-Clients (index.js)
 ```
 npm start
