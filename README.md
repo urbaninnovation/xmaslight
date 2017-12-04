@@ -11,6 +11,7 @@ https://xmaslight.herokuapp.com
 ## Installation
 ```
 git clone https://github.com/urbaninnovation/xmaslight
+cd xmaslight
 npm install
 ```
 ## Start des Christbaum-Kugel-Clients (index.js)
