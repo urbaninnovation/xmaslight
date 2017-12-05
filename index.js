@@ -2,18 +2,15 @@ var Gpio = require('onoff').Gpio;
 var LED = new Gpio(17, 'out');
 
 function blinkLED() {
-  if (LED.readSync() === 0) {
     LED.writeSync(1);
-    setTimeout(()=>{blinkLED()}, 320);
-  } else {
-    LED.writeSync(0);
-  }
+    setTimeout(()=>{LED.writeSync(0)}, 320);
 }
 
 const io = require('socket.io-client');
 var socket = io('http://xmaslight.herokuapp.com/');
 //var socket = io('http://localhost:3000/');
-var username = 'bot';
+var config = require('./config.json');
+var username = config.Name||'bot';
 
 socket.on('connect', function () {
   
@@ -53,19 +50,20 @@ socket.on('connect', function () {
 
   socket.on('disconnect', function () {
     console.log('you have been disconnected');
+    socket.emit('new message', 'I disconnected...');
   });
 
   socket.on('reconnect', function () {
     console.log('you have been reconnected');
-/*
     if (username) {
       socket.emit('add user', username);
     }
-*/
+    socket.emit('new message', 'I reconnected...');
   });
 
   socket.on('reconnect_error', function () {
     console.log('attempt to reconnect has failed');
+    socket.emit('new message', 'Error when reconnecting...');
   });
 
 });
