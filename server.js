@@ -16,6 +16,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Chatroom
 
 var numUsers = 0;
+var socketList = [];
+Array.prototype.remove = function(e) {var t, _ref; if ((t = this.indexOf(e)) > -1) {return ([].splice.apply(this, [t,1].concat(_ref = [])), _ref)}};
 
 io.on('connection', function (socket) {
   var addedUser = false;
@@ -27,6 +29,15 @@ io.on('connection', function (socket) {
       username: socket.username,
       message: data
     });
+
+    if (/^users$/i.test(data)) 
+    {
+      io.sockets.emit('new message', {
+        username: 'SYSTEM',
+        message: numUsers+' Teilnehmer: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')
+      });
+    }
+
   });
 
   // when the client emits 'change request', this listens and executes
@@ -46,6 +57,8 @@ io.on('connection', function (socket) {
     socket.username = username;
     ++numUsers;
     addedUser = true;
+    socketList.push(socket);
+    console.log(username);
     socket.emit('login', {
       numUsers: numUsers
     });
@@ -74,6 +87,7 @@ io.on('connection', function (socket) {
   socket.on('disconnect', function () {
     if (addedUser) {
       --numUsers;
+      socketList.remove(socket);
 
       // echo globally that this client has left
       socket.broadcast.emit('user left', {
