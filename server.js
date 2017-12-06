@@ -30,11 +30,36 @@ io.on('connection', function (socket) {
       message: data
     });
 
+    // nick
+    var nick=(/^\/nick\ ([0-9a-z_]{3,24})$/i.exec(data));
+    if (nick) 
+    {
+      username=nick[1];
+      socket.emit('renamed', {
+        username: username,
+        message: 'You successfully changed your nick to '+username+'.'
+      });
+      io.sockets.emit('status', {
+        username: 'SYSTEM',
+        message: socket.username+' is now known as '+username+'.'
+      });
+      socket.username=username;
+    }
+    // users
     if (/^users$/i.test(data)) 
     {
       io.sockets.emit('status', {
         username: 'SYSTEM',
         message: numUsers+' Teilnehmer: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')
+      });
+    }
+    // change color
+    if (/^\#[0-9a-f]{3,6}$/i.test(data)) //[0-9,a-f,A-F]{,6}$
+    {
+      socket.emit('change request', {
+        username: socket.username,
+        request: data,
+        validated: true // TODO: validate change request
       });
     }
 
@@ -58,7 +83,6 @@ io.on('connection', function (socket) {
     ++numUsers;
     addedUser = true;
     socketList.push(socket);
-    console.log(username);
     socket.emit('login', {
       numUsers: numUsers
     });
