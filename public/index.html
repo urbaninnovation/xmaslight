@@ -1,32 +1,115 @@
 <!doctype html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>xmaslight</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <meta name=viewport content="width=device-width, initial-scale=1">
+  <title>xmaslight console</title>
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/main.js"></script>
+  <style>
+    * {font:14px Monospace; margin:0;padding:0;box-sizing:border-box;}
+    body {background-color:#000000;color:#c0c0c0;}
+    form {padding:0px 0px 10px 0px;width:100%} /*position:fixed;bottom:0;*/
+    form input {padding:0px;width:100%;border:none;outline:none;background-color:#000000;color:#00f000;}
+    label {color:#00f000;float:left;padding: 3px 0px 2px 10px}
+    span {display: block;overflow: hidden;padding: 3px 0px 2px 8px}
+    #tweet {list-style-type:none;margin:0;padding:0;}
+    #tweet li {padding:3px 10px;}
+    ul {clear:both;white-space:pre-wrap}
+  </style>
 </head>
 <body>
-  <ul class="pages">
-    <li class="chat page">
-      <div class="colorArea">
-        <div class="colorBlock" style="background-color:#20ff20"></div>
-        <div class="colorBlock" style="background-color:#ff2020"></div>
-        <div class="colorBlock" style="background-color:#2020ff"></div>
-      </div>
-      <div class="chatArea">
-        <ul class="messages"></ul>
-      </div>
-      <input class="inputMessage" placeholder="Type here..."/>
-    </li>
-    <li class="login page">
-      <div class="form">
-        <h3 class="title">What's your nickname?</h3>
-        <input class="usernameInput" type="text" maxlength="14" />
-      </div>
-    </li>
-  </ul>
+
+  <ul id=tweet></ul>
+  <form action=javascript:void(0); onsubmit=send_message(document.getElementById('message').value)>
+    <label id=consolehead>test&gt;</label><span><input id='message' autocomplete='off' type='text' placeholder=''></span>
+  </form>
+
+  <script>
+
+  var username = 'user_with_no_name';
+  document.getElementById('consolehead').innerHTML='['+username+']';
+  var connected = false;
+  var socket = io();
+  socket.emit('add user', username);
+  
+  function send_message(m) {
+    if (m && connected) {
+      addChatMessage({username:username,message:m});
+      socket.emit('new message',m);
+      document.getElementById('message').value=""; document.getElementById('message').focus();
+    } else {console.log('no message or not connected')}
+  }
+
+  function log(text) {
+    tweet('tweet',''+text,'#c0c0c0');
+  }
+  function addChatMessage(data) {
+    tweet('tweet','['+data.username+'] '+data.message,'#00c000');
+  }
+  function tweet(ul_element,msg,color) {
+    var node = document.createElement("LI");
+    node.style.color=color;
+    var textnode = document.createTextNode(msg);
+    node.appendChild(textnode);
+    document.getElementById(ul_element).appendChild(node);
+    window.scrollTo(0,document.body.scrollHeight);
+  }
+
+  document.getElementById('message').focus();
+
+  // Socket events
+
+  // Whenever the server emits 'login', log the login message
+  socket.on('login', function (data) {
+    connected = true;
+    log('----------------------------------------');
+    log(' WELCOME to XMASLIGHT console.');
+    log(' Type your message and send with ENTER.');
+    log(' Set your name with /name [yourname]');
+    log('----------------------------------------');
+  });
+
+  // Whenever the server emits 'new message', update the chat body
+  socket.on('new message', function (data) {
+    addChatMessage(data);
+  });
+
+  // Whenever the server emits 'new message', update the chat body
+  socket.on('status', function (data) {
+    log(data.message);
+  });
+
+  // Whenever the server emits 'new message', update the chat body
+  socket.on('change request', function (data) {
+    data.message = 'Request to change color to '+data.request+' (validated='+data.validated+')';
+    addChatMessage(data);
+  });
+
+  // Whenever the server emits 'user joined', log it in the chat body
+  socket.on('user joined', function (data) {
+    log(data.username + ' joined');
+  });
+
+  // Whenever the server emits 'user left', log it in the chat body
+  socket.on('user left', function (data) {
+    log(data.username + ' left');
+  });
+
+  socket.on('disconnect', function () {
+    log('you have been disconnected');
+  });
+
+  socket.on('reconnect', function () {
+    log('you have been reconnected');
+    if (username) {
+      socket.emit('add user', username);
+    }
+  });
+
+  socket.on('reconnect_error', function () {
+    log('attempt to reconnect has failed');
+  });
+
+  </script>
+
 </body>
 </html>
