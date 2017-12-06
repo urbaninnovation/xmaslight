@@ -32,7 +32,7 @@ io.on('connection', function (socket) {
 
     if (/^users$/i.test(data)) 
     {
-      io.sockets.emit('new message', {
+      io.sockets.emit('status', {
         username: 'SYSTEM',
         message: numUsers+' Teilnehmer: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')
       });
@@ -66,20 +66,6 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('user joined', {
       username: socket.username,
       numUsers: numUsers
-    });
-  });
-
-  // when the client emits 'typing', we broadcast it to others
-  socket.on('typing', function () {
-    socket.broadcast.emit('typing', {
-      username: socket.username
-    });
-  });
-
-  // when the client emits 'stop typing', we broadcast it to others
-  socket.on('stop typing', function () {
-    socket.broadcast.emit('stop typing', {
-      username: socket.username
     });
   });
 
