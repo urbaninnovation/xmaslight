@@ -26,7 +26,7 @@
   <script>
 
   var username = 'user_with_no_name';
-  document.getElementById('consolehead').innerHTML='['+username+']';
+  document.getElementById('consolehead').innerHTML=''+username+'>';
   var connected = false;
   var socket = io();
   socket.emit('add user', username);
@@ -43,7 +43,8 @@
     tweet('tweet',''+text,'#c0c0c0');
   }
   function addChatMessage(data) {
-    tweet('tweet','['+data.username+'] '+data.message,'#00c000');
+    //tweet('tweet','['+data.username+'] '+data.message,'#00c000');
+    tweet('tweet',''+data.username+'> '+data.message,'#00c000');
   }
   function tweet(ul_element,msg,color) {
     var node = document.createElement("LI");
@@ -63,8 +64,9 @@
     connected = true;
     log('----------------------------------------');
     log(' WELCOME to XMASLIGHT console.');
-    log(' Type your message and send with ENTER.');
     log(' Set your name with /nick [yourname]');
+    log(' See a list of all users with: users');
+    log(' Change XMASLIGHT color with #[code]');
     log('----------------------------------------');
   });
 
