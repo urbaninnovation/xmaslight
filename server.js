@@ -67,7 +67,7 @@ io.on('connection', function (socket) {
 
   // when the client emits 'change request', this listens and executes
   socket.on('change request', function (color) {
-    socket.broadcast.emit('change request', {
+    io.sockets.emit('change request', {
       username: socket.username,
       request: color,
       validated: true // TODO: validate change request
