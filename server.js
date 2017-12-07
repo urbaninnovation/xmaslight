@@ -56,7 +56,7 @@ io.on('connection', function (socket) {
     // change color
     if (/^\#[0-9a-f]{3,6}$/i.test(data)) //[0-9,a-f,A-F]{,6}$
     {
-      socket.emit('change request', {
+      io.sockets.emit('change request', {
         username: socket.username,
         request: data,
         validated: true // TODO: validate change request
@@ -67,7 +67,7 @@ io.on('connection', function (socket) {
 
   // when the client emits 'change request', this listens and executes
   socket.on('change request', function (color) {
-    socket.broadcast.emit('change request', {
+    io.sockets.emit('change request', {
       username: socket.username,
       request: color,
       validated: true // TODO: validate change request
