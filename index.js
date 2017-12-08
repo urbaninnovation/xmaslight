@@ -1,6 +1,3 @@
-var Gpio = require('onoff').Gpio;
-var LED = new Gpio(17, 'out');
-
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
 var NUM_LEDS = parseInt(process.argv[2], 10) || 3,
     pixelData = new Uint32Array(NUM_LEDS);
@@ -20,40 +17,30 @@ function hex2Int(hex) {
   return result ? rgb2Int(parseInt(result[1],16),parseInt(result[2],16),parseInt(result[3],16)) : null;
 }
 
-function set_color(code) {
-  for(var i = 0; i < NUM_LEDS; i++) {pixelData[i] = hex2Int(code);}
-  ws281x.render(pixelData);
-}
-
-//ws281x.render(0x00cc22);
-
-/*
-// ---- animation-loop
-var offset = 0;
-setInterval(function () {
-  for (var i = 0; i < NUM_LEDS; i++) {
-    pixelData[i] = colorwheel((offset + i) % 256);
+function set_color(code,length) {
+  for(var i = 0; i < NUM_LEDS; i++) {
+    if (NUM_LEDS-length>0) {pixelData[i] = pixelData[i+1] || hex2Int(code)} 
+    else {pixelData[i]=hex2Int(code)}
   }
-
-  offset = (offset + 1) % 256;
   ws281x.render(pixelData);
-}, 1000 / 30);
-
-console.log('Press <ctrl>+C to exit.');
-
-// rainbow-colors, taken from http://goo.gl/Cs3H0v
-function colorwheel(pos) {
-  pos = 255 - pos;
-  if (pos < 85) { return rgb2Int(255 - pos * 3, 0, pos * 3); }
-  else if (pos < 170) { pos -= 85; return rgb2Int(0, pos * 3, 255 - pos * 3); }
-  else { pos -= 170; return rgb2Int(pos * 3, 255 - pos * 3, 0); }
 }
-*/
+
+
+var Gpio = require('onoff').Gpio;
+var LED = new Gpio(17, 'out');
 
 function blinkLED() {
     LED.writeSync(1);
     setTimeout(()=>{LED.writeSync(0)}, 320);
 }
+
+
+  //
+  // Detect if someone touched the control dial...
+  // if so
+  // socket.emit('change request', new_color);
+  //
+
 
 const io = require('socket.io-client');
 var socket = io('http://xmaslight.herokuapp.com/');
@@ -67,20 +54,10 @@ socket.on('connect', function () {
   socket.emit('new message', 'hello world');
   socket.emit('change request', '#500030');
   
-  //
-  // Detect if someone touched the control dial...
-  // if so
-  // socket.emit('change request', new_color);
-  //
-
   socket.on('change request', function (data) {
     console.log('[C] '+data.username+': '+data.request+' (validated='+data.validated+')');
     blinkLED();
-    set_color(data.request);
-    //
-    // Someone requested to change the color.
-    // Do IO-magic here...
-    //
+    set_color(data.request,NUM_LEDS);
   });
 
   socket.on('new message', function (data) {
