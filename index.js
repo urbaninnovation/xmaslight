@@ -6,7 +6,7 @@ process.on('SIGINT', function () {
   ws281x.reset();
   process.nextTick(function () { process.exit(0); });
 });
-
+var current_color=0;
 
 function rgb2Int(r, g, b) {
   return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
@@ -17,19 +17,33 @@ function hex2Int(hex) {
   return result ? rgb2Int(parseInt(result[1],16),parseInt(result[2],16),parseInt(result[3],16)) : null;
 }
 
-function set_color(code,length) {
+function set_color(colorcode,length) {
   for(var i = 0; i < NUM_LEDS; i++) {
-    if (NUM_LEDS-length>0) {pixelData[i] = pixelData[i+1] || hex2Int(code)} 
-    else {pixelData[i]=hex2Int(code)}
+    pixelData[i] = pixelData[i+length] || hex2Int(colorcode);
   }
   ws281x.render(pixelData);
 }
 
+var animation;
+function push_color_array(color_array,delay) {
+  clearInterval(animation);
+  var counter=0;
+  animation = setInterval(function(){
+    if (counter<color_array.length+NUM_LEDS) {
+      set_color(color_array[counter]||current_color,1);
+    } else {
+      clearInterval(animation);
+      //set_color(current_color,NUM_LEDS);
+    }
+    counter++;
+  },delay);
+}
 
 var Gpio = require('onoff').Gpio;
 var LED = new Gpio(17, 'out');
 
 function blinkLED() {
+    push_color_array(['303030',,'808080',,'303030'],50);
     LED.writeSync(1);
     setTimeout(()=>{LED.writeSync(0)}, 320);
 }
@@ -55,8 +69,9 @@ socket.on('connect', function () {
   socket.emit('change request', '#500030');
   
   socket.on('change request', function (data) {
-    console.log('[C] '+data.username+': '+data.request+' (validated='+data.validated+')');
+    console.log('[C] '+data.username+': '+data.request);
     blinkLED();
+    current_color=data.request;
     set_color(data.request,NUM_LEDS);
   });
 
@@ -77,7 +92,7 @@ socket.on('connect', function () {
 
   socket.on('disconnect', function () {
     console.log('you have been disconnected');
-    socket.emit('new message', 'I disconnected...');
+    socket.emit('new message', 'disconnecting...');
   });
 
   socket.on('reconnect', function () {
@@ -85,7 +100,7 @@ socket.on('connect', function () {
     if (username) {
       socket.emit('add user', username);
     }
-    socket.emit('new message', 'I reconnected...');
+    socket.emit('new message', 'reconnected...');
   });
 
   socket.on('reconnect_error', function () {
