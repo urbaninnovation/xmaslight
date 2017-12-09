@@ -62,12 +62,6 @@
   // Whenever the server emits 'login', log the login message
   socket.on('login', function (data) {
     connected = true;
-    log('----------------------------------------');
-    log(' WELCOME to XMASLIGHT console.');
-    log(' Set your name with /nick [yourname]');
-    log(' See a list of all users with: users');
-    log(' Change XMASLIGHT color with #[code]');
-    log('----------------------------------------');
   });
 
   // Whenever the server emits 'new message', update the chat body
@@ -75,12 +69,10 @@
     addChatMessage(data);
   });
 
-  // Whenever the server emits 'new message', update the chat body
   socket.on('change request', function (data) {
-    log(data.username+' requests to change color to '+data.request+' (validated='+data.validated+')')
+    log(data.username+' changes color to '+data.request)
   });
 
-  // Whenever the server emits 'new message', update the chat body
   socket.on('status', function (data) {
     log(data.message);
   });
@@ -94,7 +86,6 @@
   socket.on('renamed', function (data) {
     username=data.username;
     document.getElementById('consolehead').innerHTML=''+username+'>';
-    //log(data.message);
   });
 
   // Whenever the server emits 'user left', log it in the chat body
