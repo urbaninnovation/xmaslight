@@ -1,3 +1,4 @@
+const version='0.1';
 // Setup basic express server
 var express = require('express');
 var app = express();
@@ -22,6 +23,17 @@ Array.prototype.remove = function(e) {var t, _ref; if ((t = this.indexOf(e)) > -
 io.on('connection', function (socket) {
   var addedUser = false;
 
+  // socket.emit = reply only to the client who asked
+  // socket.broadcast.emit = reply to all clients except the one who asked
+  // io.socket.emit = reply to all clients (including the one who asked)
+
+  socket.emit('status',{message:'----------------------------------------'});
+  socket.emit('status',{message:' WELCOME to XMASLIGHT console v'+version});
+  socket.emit('status',{message:' Set your name with: nick [yourname]'});
+  socket.emit('status',{message:' See a list of all users with: users'});
+  socket.emit('status',{message:' Change XMASLIGHT color with #[code]'});
+  socket.emit('status',{message:'----------------------------------------'});
+
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
     // we tell the client to execute 'new message'
@@ -31,7 +43,7 @@ io.on('connection', function (socket) {
     });
 
     // nick
-    var nick=(/^\/nick\ ([0-9a-z_]{3,24})$/i.exec(data));
+    var nick=(/nick\ ([0-9a-z_]{3,24})$/i.exec(data));
     if (nick) 
     {
       username=nick[1];
