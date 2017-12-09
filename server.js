@@ -1,3 +1,4 @@
+const version='0.1';
 // Setup basic express server
 var express = require('express');
 var app = express();
@@ -27,7 +28,7 @@ io.on('connection', function (socket) {
   // io.socket.emit = reply to all clients (including the one who asked)
 
   socket.emit('status',{message:'----------------------------------------'});
-  socket.emit('status',{message:' WELCOME to XMASLIGHT console.'});
+  socket.emit('status',{message:' WELCOME to XMASLIGHT console v'+version});
   socket.emit('status',{message:' Set your name with: nick [yourname]'});
   socket.emit('status',{message:' See a list of all users with: users'});
   socket.emit('status',{message:' Change XMASLIGHT color with #[code]'});
