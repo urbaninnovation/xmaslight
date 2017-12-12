@@ -1,4 +1,4 @@
-const version='0.1';
+const version='1.0';
 // Setup basic express server
 var express = require('express');
 var app = express();
@@ -33,6 +33,7 @@ io.on('connection', function (socket) {
   socket.emit('status',{message:' See a list of all users with: users'});
   socket.emit('status',{message:' Change XMASLIGHT color with #[code]'});
   socket.emit('status',{message:'----------------------------------------'});
+  socket.emit('status',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
@@ -62,7 +63,7 @@ io.on('connection', function (socket) {
     {
       io.sockets.emit('status', {
         username: 'SYSTEM',
-        message: numUsers+' Teilnehmer: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')
+        message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')
       });
     }
     // change color
