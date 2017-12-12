@@ -1,3 +1,5 @@
 {
-  "Name" : "bot_that_says:check_config.json"
+  "Name" : "bot_that_says:check_config.json",
+  "WelcomeMessage" : "Hello World!",
+  "Color" : "#500030"
 }

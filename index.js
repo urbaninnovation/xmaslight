@@ -1,3 +1,4 @@
+const version='1.0';
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
 var NUM_LEDS = parseInt(process.argv[2], 10) || 3,
     pixelData = new Uint32Array(NUM_LEDS);
@@ -65,8 +66,8 @@ var username = config.Name||'bot';
 socket.on('connect', function () {
   
   socket.emit('add user', username);
-  socket.emit('new message', 'hello world');
-  socket.emit('change request', '#500030');
+  socket.emit('new message', (config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
+  socket.emit('change request', config.Color||'#500030');
   
   socket.on('change request', function (data) {
     console.log('[C] '+data.username+': '+data.request);
