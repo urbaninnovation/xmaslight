@@ -4,6 +4,7 @@
   <meta name=viewport content="width=device-width, initial-scale=1">
   <title>xmaslight console</title>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="iro.min.js"></script>
   <style>
     * {font:14px Monospace; margin:0;padding:0;box-sizing:border-box;}
     body {background-color:#000000;color:#c0c0c0;}
@@ -14,18 +15,30 @@
     #tweet {list-style-type:none;margin:0;padding:0;}
     #tweet li {padding:3px 10px;}
     ul {clear:both;white-space:pre-wrap}
+    #color-picker-container {position: fixed; display: none; width: 100%; height: 100%; top: 15px; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.5); z-index: 2;}
+    #color-picker-toggle {position: fixed; display: block; padding:15px; top: 60px; right: -40px; z-index: 3; background-color: rgba(150,150,150,0.5); cursor: pointer; transform: rotate(-90deg);}
   </style>
 </head>
 <body>
 
+  <div id="color-picker-container" onclick="cp_off()"></div>
+  <div id="color-picker-toggle" onclick="cp_toggle()">Color-Picker</div>
   <ul id=tweet></ul>
   <form action=javascript:void(0); onsubmit=send_message(document.getElementById('message').value)>
     <label id=consolehead>test&gt;</label><span><input id='message' autocomplete='off' type='text' placeholder=''></span>
   </form>
 
   <script>
+  var current_color=0;
+  var ColorPicker = new iro.ColorPicker("#color-picker-container", {width: 320, height: 320, color: {r: 255, g: 255, b: 255}, markerRadius: 8, padding: 2, sliderMargin: 24, sliderHeight: 36, borderWidth: 0, anticlockwise: false});
+  ColorPicker.on("color:change", function(color, changes) {current_color=color.hexString});
+  ColorPicker.on("input:end", function onInputEnd() {send_message(current_color)});
+  function cp_on() {document.getElementById("color-picker-container").style.display = "block";}
+  function cp_off() {document.getElementById("color-picker-container").style.display = "none";}
+  function cp_toggle() {if (document.getElementById("color-picker-container").style.display=="block") {document.getElementById("color-picker-container").style.display = "none";} else {document.getElementById("color-picker-container").style.display = "block";}}
 
-  var username = 'user_with_no_name';
+  var username = 'no_name';
+  if (decodeURIComponent(document.cookie)) {username=decodeURIComponent(document.cookie)};
   document.getElementById('consolehead').innerHTML=''+username+'>';
   var connected = false;
   var socket = io();
@@ -70,7 +83,8 @@
   });
 
   socket.on('change request', function (data) {
-    log(data.username+' changes color to '+data.request)
+    log(data.username+' changes color to '+data.request);
+    document.getElementById("color-picker-toggle").style.backgroundColor=data.request;
   });
 
   socket.on('status', function (data) {
@@ -86,6 +100,7 @@
   socket.on('renamed', function (data) {
     username=data.username;
     document.getElementById('consolehead').innerHTML=''+username+'>';
+    document.cookie = username;
   });
 
   // Whenever the server emits 'user left', log it in the chat body
