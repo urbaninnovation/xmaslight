@@ -1,13 +1,14 @@
 const version='1.0';
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
-var NUM_LEDS = parseInt(process.argv[2], 10) || 3,
+var NUM_LEDS = parseInt(process.argv[2], 10) || 16,
     pixelData = new Uint32Array(NUM_LEDS);
 ws281x.init(NUM_LEDS);
 process.on('SIGINT', function () {
   ws281x.reset();
   process.nextTick(function () { process.exit(0); });
 });
-var current_color=0;
+var current_color='000001';
+set_color(current_color,NUM_LEDS);
 
 function rgb2Int(r, g, b) {
   return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
@@ -19,8 +20,8 @@ function hex2Int(hex) {
 }
 
 function set_color(colorcode,length) {
-  for(var i = 0; i < NUM_LEDS; i++) {
-    pixelData[i] = pixelData[i+length] || hex2Int(colorcode);
+  for(var i = 1; i <= NUM_LEDS; i++) {
+    pixelData[NUM_LEDS-i] = pixelData[NUM_LEDS-i-length] || hex2Int(colorcode);
   }
   ws281x.render(pixelData);
 }
@@ -34,7 +35,6 @@ function push_color_array(color_array,delay) {
       set_color(color_array[counter]||current_color,1);
     } else {
       clearInterval(animation);
-      //set_color(current_color,NUM_LEDS);
     }
     counter++;
   },delay);
@@ -71,9 +71,8 @@ socket.on('connect', function () {
   
   socket.on('change request', function (data) {
     console.log('[C] '+data.username+': '+data.request);
-    blinkLED();
     current_color=data.request;
-    set_color(data.request,NUM_LEDS);
+    blinkLED();
   });
 
   socket.on('new message', function (data) {
@@ -93,7 +92,9 @@ socket.on('connect', function () {
 
   socket.on('disconnect', function () {
     console.log('you have been disconnected');
-    socket.emit('new message', 'disconnecting...');
+    current_color='101010';
+    set_color(current_color,NUM_LEDS);
+    push_color_array(['300000'],15000);
   });
 
   socket.on('reconnect', function () {
@@ -101,12 +102,11 @@ socket.on('connect', function () {
     if (username) {
       socket.emit('add user', username);
     }
-    socket.emit('new message', 'reconnected...');
+    socket.emit('change request', config.Color||'#500030');
   });
 
   socket.on('reconnect_error', function () {
     console.log('attempt to reconnect has failed');
-    socket.emit('new message', 'Error when reconnecting...');
   });
 
 });
