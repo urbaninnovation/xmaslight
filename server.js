@@ -33,7 +33,6 @@ io.on('connection', function (socket) {
   socket.emit('status',{message:' See a list of all users with: users'});
   socket.emit('status',{message:' Change XMASLIGHT color with #[code]'});
   socket.emit('status',{message:'----------------------------------------'});
-  socket.emit('status',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
@@ -96,9 +95,8 @@ io.on('connection', function (socket) {
     ++numUsers;
     addedUser = true;
     socketList.push(socket);
-    socket.emit('login', {
-      numUsers: numUsers
-    });
+    //socket.emit('login', {numUsers: numUsers});
+	socket.emit('login',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.username,

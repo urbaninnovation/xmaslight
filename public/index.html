@@ -43,7 +43,13 @@
   function cp_toggle() {if (document.getElementById("color-picker-container").style.display=="block") {document.getElementById("color-picker-container").style.display = "none";} else {document.getElementById("color-picker-container").style.display = "block";}}
 
   var username = 'no_name';
-  if (decodeURIComponent(document.cookie)) {username=decodeURIComponent(document.cookie)};
+  
+  // read cookie
+  if (decodeURIComponent(document.cookie)) {
+  	var c=decodeURIComponent(document.cookie).split(';');
+  	username=c[0];
+  };
+  
   document.getElementById('consolehead').innerHTML=''+username+'>';
   var connected = false;
   var socket = io();
@@ -61,7 +67,6 @@
     tweet('tweet',''+text,'#c0c0c0');
   }
   function addChatMessage(data) {
-    //tweet('tweet','['+data.username+'] '+data.message,'#00c000');
     tweet('tweet',''+data.username+'> '+data.message,'#00c000');
   }
   function tweet(ul_element,msg,color) {
@@ -80,6 +85,7 @@
   // Whenever the server emits 'login', log the login message
   socket.on('login', function (data) {
     connected = true;
+    log(data.message);
   });
 
   // Whenever the server emits 'new message', update the chat body
@@ -105,7 +111,12 @@
   socket.on('renamed', function (data) {
     username=data.username;
     document.getElementById('consolehead').innerHTML=''+username+'>';
-    document.cookie = username;
+
+    // set cookie (expiration 90 days)
+    var d = new Date();
+    d.setTime(d.getTime() + (90*86400000));
+    document.cookie=username+";expires="+d.toUTCString();
+
   });
 
   // Whenever the server emits 'user left', log it in the chat body
