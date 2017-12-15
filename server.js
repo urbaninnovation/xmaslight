@@ -96,8 +96,8 @@ io.on('connection', function (socket) {
     ++numUsers;
     addedUser = true;
     socketList.push(socket);
+    socket.emit('change request', {username: 'login-service', request: current_color});
 	  socket.emit('login',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
-    socket.emit('change request', {username: 'SYSTEM', request: current_color});
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.username,
