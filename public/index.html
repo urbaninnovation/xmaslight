@@ -96,6 +96,7 @@
   socket.on('change request', function (data) {
     log(data.username+' changes color to '+data.request);
     document.getElementById("color-picker-toggle").style.backgroundColor=data.request;
+    ColorPicker.color.hexString=data.request;
   });
 
   socket.on('status', function (data) {
