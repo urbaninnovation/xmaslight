@@ -35,11 +35,11 @@ io.on('connection', function (socket) {
   socket.emit('status',{message:'----------------------------------------'});
 
   // when the client emits 'new message', this listens and executes
+  function safe_text(text) {return unescape(text).replace(/[^\w\s\däüöÄÜÖß\.,'!\@#$^&%*()\+=\-\[\]\/{}\|:\?]/g,'').slice(0,256)}
   socket.on('new message', function (data) {
-    // we tell the client to execute 'new message'
     socket.broadcast.emit('new message', {
       username: socket.username,
-      message: data
+      message: safe_text(data)
     });
 
     // nick
