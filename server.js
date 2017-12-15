@@ -73,6 +73,7 @@ io.on('connection', function (socket) {
         username: socket.username,
         request: data
       });
+      current_color=color;
     }
 
   });
