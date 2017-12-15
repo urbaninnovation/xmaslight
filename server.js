@@ -1,4 +1,4 @@
-const version='1.0';
+const version='1.02';
 // Setup basic express server
 var express = require('express');
 var app = express();
@@ -17,6 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Chatroom
 
 var numUsers = 0;
+var current_color = '000001';
 var socketList = [];
 Array.prototype.remove = function(e) {var t, _ref; if ((t = this.indexOf(e)) > -1) {return ([].splice.apply(this, [t,1].concat(_ref = [])), _ref)}};
 
@@ -25,7 +26,7 @@ io.on('connection', function (socket) {
 
   // socket.emit = reply only to the client who asked
   // socket.broadcast.emit = reply to all clients except the one who asked
-  // io.socket.emit = reply to all clients (including the one who asked)
+  // io.sockets.emit = reply to all clients (including the one who asked)
 
   socket.emit('status',{message:'----------------------------------------'});
   socket.emit('status',{message:' WELCOME to XMASLIGHT console v'+version});
@@ -70,8 +71,7 @@ io.on('connection', function (socket) {
     {
       io.sockets.emit('change request', {
         username: socket.username,
-        request: data,
-        validated: true // TODO: validate change request
+        request: data
       });
     }
 
@@ -81,9 +81,9 @@ io.on('connection', function (socket) {
   socket.on('change request', function (color) {
     io.sockets.emit('change request', {
       username: socket.username,
-      request: color,
-      validated: true // TODO: validate change request
+      request: color
     });
+    current_color=color;
   });
 
   // when the client emits 'add user', this listens and executes
@@ -95,8 +95,8 @@ io.on('connection', function (socket) {
     ++numUsers;
     addedUser = true;
     socketList.push(socket);
-    //socket.emit('login', {numUsers: numUsers});
-	socket.emit('login',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
+	  socket.emit('login',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
+    socket.emit('change request', {username: 'SYSTEM', request: current_color});
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.username,
