@@ -1,5 +1,7 @@
 {
   "Name" : "bot_that_says:check_config.json",
   "WelcomeMessage" : "Hello World!",
-  "Color" : "#500030"
+  "Color" : "#500030",
+  "SocketURL" : "https://xmaslight.herokuapp.com",
+  "NUM_LEDS" : 18
 }
