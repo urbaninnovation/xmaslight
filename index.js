@@ -1,6 +1,6 @@
 const version='1.0';
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
-var NUM_LEDS = parseInt(process.argv[2], 10) || 16,
+var NUM_LEDS = parseInt(process.argv[2], 10) || 18,
     pixelData = new Uint32Array(NUM_LEDS);
 ws281x.init(NUM_LEDS);
 process.on('SIGINT', function () {
