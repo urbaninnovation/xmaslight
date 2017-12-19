@@ -1,6 +1,7 @@
 const version='1.0';
+var config = require('./config.json');
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
-var NUM_LEDS = parseInt(process.argv[2], 10) || 18,
+var NUM_LEDS = parseInt(config.NUM_LEDS) || 18,
     pixelData = new Uint32Array(NUM_LEDS);
 ws281x.init(NUM_LEDS);
 process.on('SIGINT', function () {
@@ -49,46 +50,6 @@ function blinkLED() {
     setTimeout(()=>{LED.writeSync(0)}, 320);
 }
 
-  //
-  // Detect if someone touched the control dial...
-  // if so
-  // socket.emit('change request', new_color);
-  //
-
-const rotaryEncoder = require('./rotary.js');
-const myEncoder = rotaryEncoder(5, 6); // Using BCM 5 & BCM 6 on the PI
-var summe=100;
-var ca = ['ee1515','ee6715','eed615','8cee15','15eea2','15e4ee','157eee','4f15ee','aa15ee','e715ee','ee15a4','ee1543'];
-var tout;
-myEncoder.on('rotation', direction => {
-  clearTimeout(tout);
-  if (direction > 0) {
-    set_color(ca[(++summe)%ca.length],NUM_LEDS);
-    //console.log('Encoder rotated right '+direction+' '+(summe));
-  } else {
-    set_color(ca[(--summe)%ca.length],NUM_LEDS);
-    //console.log('Encoder rotated left '+direction+' '+(summe));
-  }
-  tout = setTimeout(function () {socket.emit('new message', '#'+ca[(summe)%ca.length])},3000)
-});
-
-var pushButton = new Gpio(16, 'in', 'both');
-pushButton.watch(function (err, value) {
-  if (err) {
-    console.error('There was an error', err);
-  return;
-  }
-  console.log(value);
-  //socket.emit('new message', '#'+ca[(summe)%ca.length]);
-});
-
-/*
-function unexportOnClose() { //function to run when exiting program
-  pushButton.unexport(); // Unexport Button GPIO to free resources
-};
-
-process.on('SIGINT', unexportOnClose); //function to run when user closes using ctrl+c
-*/
 
   //
   // Detect if someone touched the control dial...
@@ -98,9 +59,8 @@ process.on('SIGINT', unexportOnClose); //function to run when user closes using 
 
 
 const io = require('socket.io-client');
-var socket = io('http://xmaslight.herokuapp.com/');
+var socket = io(config.SocketURL||'https://xmaslight.herokuapp.com/');
 //var socket = io('http://localhost:3000/');
-var config = require('./config.json');
 var username = config.Name||'bot';
 
 socket.on('connect', function () {
@@ -150,4 +110,3 @@ socket.on('connect', function () {
   });
 
 });
-
