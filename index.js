@@ -93,7 +93,8 @@ var socket = io(config.SocketURL||'https://xmaslight.herokuapp.com/');
 var username = config.Name||'bot';
 
 socket.on('connect', function () {
-  
+  clearTimeout(startup_animation);
+
   socket.emit('add user', username);
   socket.emit('new message', (config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   socket.emit('change request', config.Color||'#500030');
@@ -139,3 +140,12 @@ socket.on('connect', function () {
   });
 
 });
+
+var startup_animation;
+do_startup_animation(0);
+function do_startup_animation() {
+  current_color=Math.floor(Math.random()*16777215).toString(16);
+  blinkLED();
+  startup_animation = setTimeout(function () {do_startup_animation()},5000)
+}
+
