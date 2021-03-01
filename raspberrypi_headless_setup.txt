@@ -1,0 +1,47 @@
+Into /Boot-Partition insert file "ssh" (no content) and "wpa_supplicant.conf" with content:
+----------------------------------------
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=DE
+
+network={
+ ssid="<Name of your wireless LAN>"
+ psk="<Password for your wireless LAN>"
+}
+----------------------------------------
+
+Boot Raspberry Pi and scan network for client named "raspberrypi".
+ssh pi@raspberrypi
+password: raspberry
+sudo passwd pi
+sudo nano /etc/hostname
+sudo nano /etc/hosts
+
+sudo nano /boot/config.txt
+dtparam=act_led_trigger=none
+dtparam=act_led_activelow=on
+dtparam=i2c_arm=off
+dtparam=spi=off
+#dtparam=audio=on
+dtoverlay=lirc-rpi,gpio_in_pin=23,gpio_out_pin=22
+start_x=0
+enable_uart=1
+
+sudo nano /etc/modprobe.d/snd-blacklist.conf
+blacklist snd_bcm2835
+
+INSTALL ARMv6(!)-version of nodejs
+https://nodejs.org/dist/v9.7.1/node-v9.7.1-linux-armv6l.tar.gz
+curl -o node-v9.7.1-linux-armv6l.tar.gz https://nodejs.org/dist/v9.7.1/node-v9.7.1-linux-armv6l.tar.gz
+tar -xzf node-v9.7.1-linux-armv6l.tar.gz
+sudo cp -r node-v9.7.1-linux-armv6l/* /usr/local/
+
+sudo apt-get install npm git
+//gcc make build-essential python-dev scons swig
+
+sudo npm install -g pm2
+git clone https://github.com/gwelt/...
+
+sudo pm2 start index.js
+sudo pm2 save
+sudo pm2 startup
