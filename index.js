@@ -1,15 +1,16 @@
-const version='1.0';
+const version='1.1 03/2021';
 var config = require('./config.json');
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
-var NUM_LEDS = parseInt(config.NUM_LEDS) || 18,
+var NUM_LEDS = parseInt(process.argv[2], 10) || config.NUM_LEDS || 16,
     pixelData = new Uint32Array(NUM_LEDS);
 ws281x.init(NUM_LEDS);
 process.on('SIGINT', function () {
   ws281x.reset();
   process.nextTick(function () { process.exit(0); });
 });
-var current_color='000001';
+var current_color='008000';
 set_color(current_color,NUM_LEDS);
+//push_color_array(['303030',,'808080',,'303030'],50);
 
 function rgb2Int(r, g, b) {
   return ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
@@ -57,50 +58,21 @@ function blinkLED() {
   // socket.emit('change request', new_color);
   //
 
-const rotaryEncoder = require('./rotary.js');
-const myEncoder = rotaryEncoder(5, 6); // Using BCM 5 & BCM 6 on the PI
-var summe=100;
-var ca = ['ee1515','ee6715','eed615','8cee15','15eea2','15e4ee','157eee','4f15ee','aa15ee','e715ee','ee15a4','ee1543'];
-var tout;
-myEncoder.on('rotation', direction => {
-  clearTimeout(tout);
-  if (direction > 0) {
-    set_color(ca[(++summe)%ca.length],NUM_LEDS);
-    //console.log('Encoder rotated right '+direction+' '+(summe));
-  } else {
-    set_color(ca[(--summe)%ca.length],NUM_LEDS);
-    //console.log('Encoder rotated left '+direction+' '+(summe));
-  }
-  tout = setTimeout(function () {socket.emit('new message', '#'+ca[(summe)%ca.length])},3000)
-});
-
-var pushButton = new Gpio(16, 'in', 'both');
-pushButton.watch(function (err, value) {
-  if (err) {
-    console.error('There was an error', err);
-  return;
-  }
-  console.log(value);
-  //socket.emit('new message', '#'+ca[(summe)%ca.length]);
-});
-
-
-
 
 const io = require('socket.io-client');
-var socket = io(config.SocketURL||'https://xmaslight.herokuapp.com/');
-//var socket = io('http://localhost:3000/');
+var socket = io('https://xmaslight.herokuapp.com/');
 var username = config.Name||'bot';
 
 socket.on('connect', function () {
-  clearTimeout(startup_animation);
-
+  console.log('[M] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
+  
   socket.emit('add user', username);
+  console.log('===ADD USER=== '+username);
   socket.emit('new message', (config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   socket.emit('change request', config.Color||'#500030');
   
   socket.on('change request', function (data) {
-    console.log('[C] '+data.username+': '+data.request);
+    //console.log('[C] '+data.username+': '+data.request);
     current_color=data.request;
     blinkLED();
   });
@@ -110,42 +82,75 @@ socket.on('connect', function () {
     blinkLED();
   });
 
+  socket.on('status', function (data) {
+    //console.log('[S] '+data.message);
+    blinkLED();
+  });
+
   socket.on('user joined', function (data) {
-    console.log(data.username + ' joined');
+    //console.log(data.username + ' joined');
     blinkLED();
   });
 
   socket.on('user left', function (data) {
-    console.log(data.username + ' left');
+    //console.log(data.username + ' left');
     blinkLED();
   });
 
   socket.on('disconnect', function () {
-    console.log('you have been disconnected');
+    //console.log('you have been disconnected');
     current_color='101010';
     set_color(current_color,NUM_LEDS);
     push_color_array(['300000'],15000);
   });
 
   socket.on('reconnect', function () {
-    console.log('you have been reconnected');
+    //console.log('you have been reconnected');
     if (username) {
       socket.emit('add user', username);
+      console.log('===ADD USER=== '+username);
     }
     socket.emit('change request', config.Color||'#500030');
   });
 
   socket.on('reconnect_error', function () {
-    console.log('attempt to reconnect has failed');
+    //console.log('attempt to reconnect has failed');
   });
 
 });
 
-var startup_animation;
-do_startup_animation(0);
-function do_startup_animation() {
-  current_color=Math.floor(Math.random()*16777215).toString(16);
-  blinkLED();
-  startup_animation = setTimeout(function () {do_startup_animation()},5000)
+/*
+	THERMAL-PRINTER ADD-ON
+*/ 
+const printer="/dev/ttyS0";
+const baudrate="9600";
+p=require('child_process');
+p.execSync('stty -F '+printer+' '+baudrate);
+
+let IP=require('os').networkInterfaces()['wlan0'][0]['address'];
+let welcome="================================\\n"+IP+" CONNECTING TO\\nhttps://xmaslight.herokuapp.com\\n"+"================================";
+print_thermal(welcome);
+
+function print_thermal(text) {
+  p.execSync('echo "'+text+'" > '+printer,'e');
 }
+
+Date.prototype.addHours= function(h){this.setHours(this.getHours()+h); return this;}
+//winter: addHours(1), summer: addHours(2)
+function get_time(long) {var date=new Date().addHours(0);var hour=date.getHours();hour=(hour<10?"0":"")+hour;var min=date.getMinutes();min=(min<10?"0":"")+min;return hour+((long)?":":"")+min;}
+
+function message(msg) {
+  var mapUmlaute = {ä:"ae",ü:"ue",ö:"oe",Ä:"Ae",Ü:"Ue",Ö:"Oe",ß:"ss"};
+  msg=msg.replace(/[äüöÄÜÖß]/g,function(m){return mapUmlaute[m]});
+  msg=msg.replace(/\ {2,}/g," ");
+  msg=get_time()+" "+msg;
+  print_thermal(msg);
+}
+
+
+var util = require('util');
+console.log = function(d) {
+  message(d);
+  process.stdout.write(util.format(d) + '\n');
+};
 
