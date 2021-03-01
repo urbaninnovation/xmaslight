@@ -22,13 +22,16 @@ dtparam=act_led_trigger=none
 dtparam=act_led_activelow=on
 dtparam=i2c_arm=off
 dtparam=spi=off
-#dtparam=audio=on
+??#dtparam=audio=on
 dtoverlay=lirc-rpi,gpio_in_pin=23,gpio_out_pin=22
 start_x=0
 enable_uart=1
 
-sudo nano /etc/modprobe.d/snd-blacklist.conf
-blacklist snd_bcm2835
+??sudo nano /etc/modprobe.d/snd-blacklist.conf
+??blacklist snd_bcm2835
+
+sudo raspi-config
+Under 3 “Interface Options,” select “P6 Serial Port”: login shell = NO, hardware enabled = YES
 
 INSTALL ARMv6(!)-version of nodejs
 https://nodejs.org/dist/v9.7.1/node-v9.7.1-linux-armv6l.tar.gz
