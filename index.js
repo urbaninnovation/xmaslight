@@ -67,7 +67,7 @@ socket.on('connect', function () {
   console.log('[INIT] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   
   socket.emit('add user', username);
-  console.log('===ADD USER=== '+username);
+  //console.log('===ADD USER=== '+username);
   socket.emit('new message', (config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   socket.emit('change request', config.Color||'#500030');
   
@@ -108,7 +108,7 @@ socket.on('connect', function () {
     //console.log('you have been reconnected');
     if (username) {
       //socket.emit('add user', username);
-      console.log('===NO RE-ADD USER=== '+username);
+      //console.log('===ADD USER=== '+username);
     }
     socket.emit('change request', config.Color||'#500030');
   });
