@@ -67,7 +67,7 @@ socket.on('connect', function () {
   console.log('[M] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   
   socket.emit('add user', username);
-  console.log('===ADD USER=== '+username);
+  //console.log('===ADD USER=== '+username);
   socket.emit('new message', (config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   socket.emit('change request', config.Color||'#500030');
   
