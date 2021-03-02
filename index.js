@@ -107,8 +107,8 @@ socket.on('connect', function () {
   socket.on('reconnect', function () {
     //console.log('you have been reconnected');
     if (username) {
-      socket.emit('add user', username);
-      console.log('===ADD USER=== '+username);
+      //socket.emit('add user', username);
+      //console.log('===ADD USER=== '+username);
     }
     socket.emit('change request', config.Color||'#500030');
   });
