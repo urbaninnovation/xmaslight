@@ -1,4 +1,4 @@
-const version='1.02';
+const version='1.03';
 // Setup basic express server
 var express = require('express');
 var app = express();
@@ -28,12 +28,12 @@ io.on('connection', function (socket) {
   // socket.broadcast.emit = reply to all clients except the one who asked
   // io.sockets.emit = reply to all clients (including the one who asked)
 
-  socket.emit('status',{message:'----------------------------------------'});
+  socket.emit('status',{message:'---------------------------------------'});
   socket.emit('status',{message:' WELCOME to XMASLIGHT console v'+version});
   socket.emit('status',{message:' Set your name with: nick [yourname]'});
   socket.emit('status',{message:' See a list of all users with: users'});
   socket.emit('status',{message:' Change XMASLIGHT color with #[code]'});
-  socket.emit('status',{message:'----------------------------------------'});
+  socket.emit('status',{message:'---------------------------------------'});
 
   // when the client emits 'new message', this listens and executes
   function safe_text(text) {return unescape(text).replace(/[^\w\s\däüöÄÜÖß\.,'!\@#$^&%*()\+=\-\[\]\/{}\|:\?]/g,'').slice(0,256)}
@@ -95,9 +95,10 @@ io.on('connection', function (socket) {
     socket.username = username;
     ++numUsers;
     addedUser = true;
+    socketList.remove(socket);
     socketList.push(socket);
     socket.emit('change request', {username: 'login-service', request: current_color});
-	  socket.emit('login',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
+    socket.emit('login',{message: numUsers+' users online: '+socketList.reduce((a,v)=>{a.push(v.username); return a},[]).join(', ')});
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.username,

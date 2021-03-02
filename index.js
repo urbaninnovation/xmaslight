@@ -64,7 +64,7 @@ var socket = io('https://xmaslight.herokuapp.com/');
 var username = config.Name||'bot';
 
 socket.on('connect', function () {
-  console.log('[M] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
+  console.log('[INIT] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   
   socket.emit('add user', username);
   console.log('===ADD USER=== '+username);
@@ -88,12 +88,12 @@ socket.on('connect', function () {
   });
 
   socket.on('user joined', function (data) {
-    //console.log(data.username + ' joined');
+    console.log(data.username + ' joined');
     blinkLED();
   });
 
   socket.on('user left', function (data) {
-    //console.log(data.username + ' left');
+    console.log(data.username + ' left');
     blinkLED();
   });
 
@@ -107,8 +107,8 @@ socket.on('connect', function () {
   socket.on('reconnect', function () {
     //console.log('you have been reconnected');
     if (username) {
-      socket.emit('add user', username);
-      console.log('===ADD USER=== '+username);
+      //socket.emit('add user', username);
+      console.log('===NO RE-ADD USER=== '+username);
     }
     socket.emit('change request', config.Color||'#500030');
   });
