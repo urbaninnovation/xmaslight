@@ -65,12 +65,12 @@ var username = config.Name||'bot';
 
 socket.on('connect', function () {
   console.log('[INIT] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
-  
   socket.emit('add user', username);
-  //console.log('===ADD USER=== '+username);
+  console.log('===ADD USER=== '+username);
   socket.emit('new message', (config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   socket.emit('change request', config.Color||'#500030');
-  
+});
+
   socket.on('change request', function (data) {
     //console.log('[C] '+data.username+': '+data.request);
     current_color=data.request;
@@ -97,27 +97,27 @@ socket.on('connect', function () {
     blinkLED();
   });
 
-  socket.on('disconnect', function () {
-    //console.log('you have been disconnected');
+  socket.on('disconnect', function (reason) {
+    //socket.close();
+    console.log('you have been disconnected '+reason);
     current_color='101010';
     set_color(current_color,NUM_LEDS);
     push_color_array(['300000'],15000);
   });
 
   socket.on('reconnect', function () {
-    //console.log('you have been reconnected');
+    console.log('you have been reconnected');
     if (username) {
       //socket.emit('add user', username);
-      //console.log('===ADD USER=== '+username);
+      //console.log('===RE-ADD USER=== '+username);
     }
     socket.emit('change request', config.Color||'#500030');
   });
 
   socket.on('reconnect_error', function () {
-    //console.log('attempt to reconnect has failed');
+    console.log('attempt to reconnect has failed');
   });
 
-});
 
 /*
 	THERMAL-PRINTER ADD-ON
