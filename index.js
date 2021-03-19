@@ -64,9 +64,9 @@ var socket = io('https://xmaslight.herokuapp.com/');
 var username = config.Name||'bot';
 
 socket.on('connect', function () {
-  console.log('[INIT] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
+  //console.log('[INIT] '+username+': '+(config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   socket.emit('add user', username);
-  console.log('===ADD USER=== '+username);
+  //console.log('===ADD USER=== '+username);
   socket.emit('new message', (config.WelcomeMessage||'hello world')+' ('+require('os').networkInterfaces()['wlan0'][0]['address']+' @v'+version+')');
   socket.emit('change request', config.Color||'#500030');
 });
@@ -99,16 +99,16 @@ socket.on('connect', function () {
 
   socket.on('disconnect', function (reason) {
     //socket.close();
-    console.log('you have been disconnected '+reason);
+    //console.log('you have been disconnected '+reason);
     current_color='101010';
     set_color(current_color,NUM_LEDS);
     push_color_array(['300000'],15000);
   });
 
   socket.on('reconnect', function () {
-    console.log('you have been reconnected');
+    //console.log('you have been reconnected');
     if (username) {
-      //socket.emit('add user', username);
+      socket.emit('add user', username);
       //console.log('===RE-ADD USER=== '+username);
     }
     socket.emit('change request', config.Color||'#500030');
@@ -137,7 +137,7 @@ function print_thermal(text) {
 
 Date.prototype.addHours= function(h){this.setHours(this.getHours()+h); return this;}
 //winter: addHours(1), summer: addHours(2)
-function get_time(long) {var date=new Date().addHours(0);var hour=date.getHours();hour=(hour<10?"0":"")+hour;var min=date.getMinutes();min=(min<10?"0":"")+min;return hour+((long)?":":"")+min;}
+function get_time(long) {var date=new Date().addHours(1);var hour=date.getHours();hour=(hour<10?"0":"")+hour;var min=date.getMinutes();min=(min<10?"0":"")+min;return hour+((long)?":":"")+min;}
 
 function message(msg) {
   var mapUmlaute = {ä:"ae",ü:"ue",ö:"oe",Ä:"Ae",Ü:"Ue",Ö:"Oe",ß:"ss"};
