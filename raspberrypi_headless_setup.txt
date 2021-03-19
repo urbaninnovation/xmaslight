@@ -18,33 +18,54 @@ sudo nano /etc/hostname
 sudo nano /etc/hosts
 
 sudo nano /boot/config.txt
+# the first two lines are for disabling the green LED on the Raspberry board / comment them if you like the light to be on
 dtparam=act_led_trigger=none
 dtparam=act_led_activelow=on
 dtparam=i2c_arm=off
 dtparam=spi=off
-??#dtparam=audio=on
+# not sure about this parameter...
+#dtparam=audio=on
 dtoverlay=lirc-rpi,gpio_in_pin=23,gpio_out_pin=22
 start_x=0
 enable_uart=1
 
-??sudo nano /etc/modprobe.d/snd-blacklist.conf
-??blacklist snd_bcm2835
+# not sure if this is needed...
+#??sudo nano /etc/modprobe.d/snd-blacklist.conf
+#??blacklist snd_bcm2835
 
+# The next step is only if you have a printer attached to TTY.
+# If you don't do this, it will spill out lots of paper with wierd characters on booting the Raspberry Pi.
 sudo raspi-config
 Under 3 “Interface Options,” select “P6 Serial Port”: login shell = NO, hardware enabled = YES
 
-INSTALL ARMv6(!)-version of nodejs
+# INSTALL ARMv6(!)-version of nodejs because other versions won't do the trick on RPI zeros at least.
 https://nodejs.org/dist/v9.7.1/node-v9.7.1-linux-armv6l.tar.gz
 curl -o node-v9.7.1-linux-armv6l.tar.gz https://nodejs.org/dist/v9.7.1/node-v9.7.1-linux-armv6l.tar.gz
 tar -xzf node-v9.7.1-linux-armv6l.tar.gz
 sudo cp -r node-v9.7.1-linux-armv6l/* /usr/local/
 
+# install git
 sudo apt-get install npm git
 //gcc make build-essential python-dev scons swig
 
+# install pm2 if you like it to run in the background
 sudo npm install -g pm2
-git clone https://github.com/gwelt/...
 
-sudo pm2 start index.js
+# clone the code
+git clone https://github.com/gwelt/xmaslight
+
+# If running a xmaslight-client with all the flickering LED-stuff (not the server, which is default for the repository because the server is deployed automatically):
+rm package.json
+cp package.json.client package.json
+
+# check configuration
+nano config.json
+
+# Check if it's all working
+npm install
+sudo node index.js
+
+# If it's all ok, start it in the background:
+sudo pm2 start index.js --name xmaslight
 sudo pm2 save
 sudo pm2 startup
