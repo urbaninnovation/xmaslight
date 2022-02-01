@@ -109,7 +109,6 @@ socket.on('connect', function () {
 
 /*
 	THERMAL-PRINTER ADD-ON
-*/ 
 const printer="/dev/ttyS0";
 const baudrate="9600";
 p=require('child_process');
@@ -122,6 +121,7 @@ print_thermal(welcome);
 function print_thermal(text) {
   p.execSync('echo "'+text+'" > '+printer,'e');
 }
+*/ 
 
 Date.prototype.addHours= function(h){this.setHours(this.getHours()+h); return this;}
 //winter: addHours(1), summer: addHours(2)
@@ -132,7 +132,7 @@ function message(msg) {
   msg=msg.replace(/[äüöÄÜÖß]/g,function(m){return mapUmlaute[m]});
   msg=msg.replace(/\ {2,}/g," ");
   msg=get_time()+" "+msg;
-  print_thermal(msg);
+  //print_thermal(msg);
 }
 
 
