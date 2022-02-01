@@ -1,11 +1,11 @@
 const version='1.0';
 var config = require('./config.json');
-var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
+var ws281x = require('rpi-ws281x');
 var NUM_LEDS = parseInt(config.NUM_LEDS) || 18,
     pixelData = new Uint32Array(NUM_LEDS);
-ws281x.init(NUM_LEDS);
+ws281x.configure({leds:NUM_LEDS});
 process.on('SIGINT', function () {
-  ws281x.reset();
+  //ws281x.reset();
   process.nextTick(function () { process.exit(0); });
 });
 var current_color='000001';
@@ -41,13 +41,13 @@ function push_color_array(color_array,delay) {
   },delay);
 }
 
-var Gpio = require('onoff').Gpio;
-var LED = new Gpio(17, 'out');
+//var Gpio = require('onoff').Gpio;
+//var LED = new Gpio(17, 'out');
 
 function blinkLED() {
     push_color_array(['303030',,'808080',,'303030'],50);
-    LED.writeSync(1);
-    setTimeout(()=>{LED.writeSync(0)}, 320);
+//    LED.writeSync(1);
+//    setTimeout(()=>{LED.writeSync(0)}, 320);
 }
 
 

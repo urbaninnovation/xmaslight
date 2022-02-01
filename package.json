@@ -11,8 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "4.13.4",
-    "onoff": "^1.1.8",
-    "rpi-ws281x-native": "^0.8.2",
+    "rpi-ws281x": "^1.0.36",
     "socket.io": "^2.0.4"
   },
   "scripts": {
