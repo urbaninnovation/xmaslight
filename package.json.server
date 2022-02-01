@@ -10,13 +10,10 @@
   "author": "Nils, Tim und Sven",
   "license": "MIT",
   "dependencies": {
-<<<<<<< HEAD
-    "express": "4.13.4",
-    "rpi-ws281x": "^1.0.36",
+    "express": "^4.17.1",
     "socket.io": "^2.0.4"
   },
   "scripts": {
-    "start": "sudo node index.js"
->>>>>>> cbdcdb1504b9a1fadb867ba1b3577b82b0c4644f
+    "start": "node server.js"
   }
 }
