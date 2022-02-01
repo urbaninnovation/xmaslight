@@ -1,9 +1,7 @@
 const version='1.1 03/2021';
 var config = require('./config.json');
-<<<<<<< HEAD
 var ws281x = require('rpi-ws281x');
 var NUM_LEDS = parseInt(config.NUM_LEDS) || 18,
->>>>>>> cbdcdb1504b9a1fadb867ba1b3577b82b0c4644f
     pixelData = new Uint32Array(NUM_LEDS);
 ws281x.configure({leds:NUM_LEDS});
 process.on('SIGINT', function () {
