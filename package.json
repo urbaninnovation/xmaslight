@@ -15,6 +15,6 @@
     "socket.io": "^2.0.4"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "sudo node index.js"
   }
 }

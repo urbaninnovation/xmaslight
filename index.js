@@ -41,21 +41,9 @@ function push_color_array(color_array,delay) {
   },delay);
 }
 
-//var Gpio = require('onoff').Gpio;
-//var LED = new Gpio(17, 'out');
-
 function blinkLED() {
     push_color_array(['303030',,'808080',,'303030'],50);
-//    LED.writeSync(1);
-//    setTimeout(()=>{LED.writeSync(0)}, 320);
 }
-
-
-  //
-  // Detect if someone touched the control dial...
-  // if so
-  // socket.emit('change request', new_color);
-  //
 
 
 const io = require('socket.io-client');
