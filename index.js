@@ -1,4 +1,4 @@
-const version='1.1 03/2021';
+const version='1.2 02/2022';
 var config = require('./config.json');
 var ws281x = require('rpi-ws281x');
 var NUM_LEDS = parseInt(config.NUM_LEDS) || 18,
