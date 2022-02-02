@@ -1,0 +1,20 @@
+{
+  "name": "xmaslight",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/urbaninnovation/xmaslight"
+  },
+  "description": "Eine vernetzte Christbaum-Kugel, mit einer rgb LED und einem Drehknopf incl Schalter",
+  "main": "server.js",
+  "author": "Nils, Tim und Sven",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.2",
+    "rpi-ws281x": "^1.0.36",
+    "socket.io": "^2.0.4"
+  },
+  "scripts": {
+    "start": "sudo node index.js"
+  }
+}
