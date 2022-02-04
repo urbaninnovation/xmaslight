@@ -3,7 +3,7 @@ var config = require('./config.json');
 var ws281x = require('rpi-ws281x');
 var NUM_LEDS = parseInt(config.NUM_LEDS) || 18,
     pixelData = new Uint32Array(NUM_LEDS);
-ws281x.configure({leds:NUM_LEDS});
+ws281x.configure({leds:NUM_LEDS,stripType:'grb'});
 process.on('SIGINT', function () {
   //ws281x.reset();
   process.nextTick(function () { process.exit(0); });
