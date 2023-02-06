@@ -6,15 +6,14 @@
     "url": "https://github.com/urbaninnovation/xmaslight"
   },
   "description": "Eine vernetzte Christbaum-Kugel, mit einer rgb LED und einem Drehknopf incl Schalter",
-  "main": "index.js",
+  "main": "server.js",
   "author": "Nils, Tim und Sven",
   "license": "MIT",
   "dependencies": {
-    "onoff": "^1.1.8",
-    "rpi-ws281x-native": "^0.8.2",
+    "express": "^4.17.1",
     "socket.io": "^2.0.4"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   }
 }
