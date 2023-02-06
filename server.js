@@ -4,15 +4,18 @@ var express = require('express');
 var app = express();
 var path = require('path');
 var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-var port = process.env.PORT || 3000;
+//var io = require('socket.io')(server);
+var io = require('socket.io').listen(server, {'path': '/xmaslight/socket.io'});
+var port = process.env.PORT || 3006;
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
 });
 
 // Routing
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, '/public')));
+app.use('(/xmaslight)?/', express.static(__dirname + '/public'));
+//app.use(function(req,res) {res.sendFile(path.join(__dirname,'public','index.html'))});
 
 // Chatroom
 
