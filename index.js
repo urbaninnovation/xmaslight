@@ -5,9 +5,9 @@ const socket = require('socket.io-client')(config.SocketURL,{rejectUnauthorized:
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
 var NUM_LEDS = parseInt(process.argv[2], 10) || config.NUM_LEDS || 16,
     pixelData = new Uint32Array(NUM_LEDS);
-ws281x.configure({leds:NUM_LEDS,stripType:'grb'});
+ws281x.init(NUM_LEDS);
 process.on('SIGINT', function () {
-  //ws281x.reset();
+  ws281x.reset();
   process.nextTick(function () { process.exit(0); });
 });
 var current_color='008000';
@@ -44,8 +44,13 @@ function push_color_array(color_array,delay) {
   },delay);
 }
 
+var Gpio = require('onoff').Gpio;
+var LED = new Gpio(17, 'out');
+
 function blinkLED() {
     push_color_array(['303030',,'808080',,'303030'],50);
+    LED.writeSync(1);
+    setTimeout(()=>{LED.writeSync(0)}, 320);
 }
 
 var username = config.Name||'bot';
@@ -108,6 +113,7 @@ socket.on('connect', function () {
 
 /*
 	THERMAL-PRINTER ADD-ON
+*/ 
 const printer="/dev/ttyS0";
 const baudrate="9600";
 p=require('child_process');
@@ -120,7 +126,6 @@ print_thermal(welcome);
 function print_thermal(text) {
   //p.execSync('echo "'+text+'" > '+printer,'e');
 }
-*/ 
 
 Date.prototype.addHours= function(h){this.setHours(this.getHours()+h); return this;}
 //winter: addHours(1), summer: addHours(2)
@@ -131,7 +136,7 @@ function message(msg) {
   msg=msg.replace(/[äüöÄÜÖß]/g,function(m){return mapUmlaute[m]});
   msg=msg.replace(/\ {2,}/g," ");
   msg=get_time()+" "+msg;
-  //print_thermal(msg);
+  print_thermal(msg);
 }
 
 
