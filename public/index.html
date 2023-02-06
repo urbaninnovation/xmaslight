@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" sizes="180x180">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">  <title>xmaslight console</title>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="/xmaslight/socket.io/socket.io.js"></script>
   <script src="iro.min.js"></script>
   <style>
     * {font:14px Monospace; margin:0;padding:0;box-sizing:border-box;}
@@ -52,7 +52,8 @@
   
   document.getElementById('consolehead').innerHTML=''+username+'>';
   var connected = false;
-  var socket = io();
+  //var socket = io();
+  var socket=io.connect('', { 'path': '/xmaslight/socket.io' });
   socket.emit('add user', username);
   
   function send_message(m) {
