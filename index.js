@@ -1,5 +1,7 @@
-const version='1.1 03/2021';
+const version='1.2 02/2023';
 var config = require('./config.json');
+console.log(config.SocketURL);
+const socket = require('socket.io-client')(config.SocketURL,{rejectUnauthorized:false,'path':'/xmaslight/socket.io'});
 var ws281x = require('./node_modules/rpi-ws281x-native/lib/ws281x-native');
 var NUM_LEDS = parseInt(process.argv[2], 10) || config.NUM_LEDS || 16,
     pixelData = new Uint32Array(NUM_LEDS);
@@ -51,16 +53,6 @@ function blinkLED() {
     setTimeout(()=>{LED.writeSync(0)}, 320);
 }
 
-
-  //
-  // Detect if someone touched the control dial...
-  // if so
-  // socket.emit('change request', new_color);
-  //
-
-
-const io = require('socket.io-client');
-var socket = io('https://xmaslight.herokuapp.com/');
 var username = config.Name||'bot';
 
 socket.on('connect', function () {
@@ -114,8 +106,8 @@ socket.on('connect', function () {
     socket.emit('change request', config.Color||'#500030');
   });
 
-  socket.on('reconnect_error', function () {
-    console.log('attempt to reconnect has failed');
+  socket.on('reconnect_error', function (r) {
+    console.log('attempt to reconnect has failed '+r);
   });
 
 
@@ -128,11 +120,11 @@ p=require('child_process');
 p.execSync('stty -F '+printer+' '+baudrate);
 
 let IP=require('os').networkInterfaces()['wlan0'][0]['address'];
-let welcome="================================\\n"+IP+" CONNECTING TO\\nhttps://xmaslight.herokuapp.com\\n"+"================================";
+let welcome="================================\\n"+IP+" CONNECTING TO\\n"+config.SocketURL+"\\n"+"================================";
 print_thermal(welcome);
 
 function print_thermal(text) {
-  p.execSync('echo "'+text+'" > '+printer,'e');
+  //p.execSync('echo "'+text+'" > '+printer,'e');
 }
 
 Date.prototype.addHours= function(h){this.setHours(this.getHours()+h); return this;}
@@ -150,7 +142,45 @@ function message(msg) {
 
 var util = require('util');
 console.log = function(d) {
-  message(d);
+  //message(d);
   process.stdout.write(util.format(d) + '\n');
 };
+
+/*
+  255-listener ADD-ON
+
+const socket2 = require('socket.io-client')('https://gwelt.net');
+setTimeout(function(){console.log(socket2)});
+socket2.on('connect', function() {
+  console.log('C');
+  socket2.emit('message','Hello World from xmaslight-client!',{rooms:['#broadcast','#xmaslight']});
+  //setTimeout(function(){socket.disconnect()},100);
+});
+socket2.on('message', function(msg,meta) {
+  console.log('B');
+  blinkLED();
+});
+  socket2.on('disconnect', function (reason) {
+    console.log('you have been disconnected '+reason);
+  });
+
+  socket2.on('reconnect', function () {
+    console.log('you have been reconnected');
+  });
+
+  socket2.on('reconnect_error', function (r) {
+    console.log('attempt to reconnect has failed '+r);
+  });
+
+*/ 
+
+
+
+
+
+
+
+
+
+
 
